@@ -16,7 +16,7 @@ type queue struct {
 
 func NewQueue(redisUrl string) queue {
 	if redisUrl == "" {
-		panic("A redis url must be set, e.g. with the env \"PIPER_REDIS_URL\" following the format redis://<user>:<password>@<host>:<port>/<db>")
+		log.Fatal("A redis url must be set, e.g. with the env \"PIPER_REDIS_URL\" following the format redis://<user>:<password>@<host>:<port>/<db>")
 	}
 
 	q := queue{}
