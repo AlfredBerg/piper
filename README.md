@@ -4,8 +4,7 @@ A command-line queuing tool. It makes it easy to:
 * Insert new items to stdin of an already running program
 * Distribute a workload between multiple machines/workers
 
-![piper-demo](https://github.com/AlfredBerg/piper/assets/18570335/c8b2e9d8-5058-4339-8309-0e40ce13dc11)
-
+![piper-demo](https://github.com/AlfredBerg/piper/assets/18570335/e07c5a15-9569-4be8-b1ea-74d8204ea1bd)
 
 ## Installation
 ```bash
