@@ -10,8 +10,8 @@ A command-line queuing tool. It makes it easy to:
 ```bash
 go install github.com/AlfredBerg/piper@latest
 ```
-A redis server is required. To install one follow https://redis.io/docs/install/install-redis/, https://hub.docker.com/_/redis or setup one with Redis Cloud.  
-Specify what redis server to use with the environment variable `PIPER_REDIS_URL`, e.g. like
+A Redis server is required. To install one follow https://redis.io/docs/install/install-redis/, https://hub.docker.com/_/redis or setup one with Redis Cloud.  
+Specify what Redis server to use with the environment variable `PIPER_REDIS_URL`. The Redis URL should have the following format `redis://<user>:<password>@<host>:<port>/<db>`, e.g. like
 ```
 export PIPER_REDIS_URL='redis://localhost:6379/'
 ```
