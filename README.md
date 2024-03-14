@@ -4,15 +4,14 @@ A command-line queuing tool. It makes it easy to:
 * Insert new items to stdin of an already running program
 * Distribute a workload between multiple machines/workers
 
-![piper-demo](https://github.com/AlfredBerg/piper/assets/18570335/c8b2e9d8-5058-4339-8309-0e40ce13dc11)
-
+![piper-demo](https://github.com/AlfredBerg/piper/assets/18570335/e07c5a15-9569-4be8-b1ea-74d8204ea1bd)
 
 ## Installation
 ```bash
 go install github.com/AlfredBerg/piper@latest
 ```
-A redis server is required. To install one follow https://redis.io/docs/install/install-redis/, https://hub.docker.com/_/redis or setup one with Redis Cloud.  
-Specify what redis server to use with the environment variable `PIPER_REDIS_URL`, e.g. like
+A Redis server is required. To install one follow https://redis.io/docs/install/install-redis/, https://hub.docker.com/_/redis or setup one with Redis Cloud.  
+Specify what Redis server to use with the environment variable `PIPER_REDIS_URL`. The Redis URL should have the following format `redis://<user>:<password>@<host>:<port>/<db>`, e.g. like
 ```
 export PIPER_REDIS_URL='redis://localhost:6379/'
 ```
