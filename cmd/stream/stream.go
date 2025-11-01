@@ -6,11 +6,10 @@ import (
 	"github.com/AlfredBerg/piper/internal/pipebuffer"
 	"github.com/AlfredBerg/piper/internal/queue"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 type streamFlags struct {
-	queue string
+	queueName string
 }
 
 func NewCmdStream() *cobra.Command {
@@ -24,11 +23,14 @@ func NewCmdStream() *cobra.Command {
 		},
 	}
 
-	streamCmd.Flags().StringVarP(&f.queue, "queue", "q", "", "Queue to read items from")
+	streamCmd.Flags().StringVarP(&f.queueName, "queue", "q", "", "Queue to read items from")
+
 	return streamCmd
 }
 
 func stream(f streamFlags) {
+	queue := queue.NewQueue()
+	defer queue.Close()
 	//Since linux 2.6.11 the pipe buffer is by default 16 pages.
 	//We generally want a fairly small pipe buffer, so if e.g.
 	//the application that consumes the output crashes the number
@@ -46,9 +48,5 @@ func stream(f streamFlags) {
 		pipebuffer.Set(os.Stdout.Fd(), 4096)
 	}
 
-	redisUrl := viper.GetString("redis_Url")
-	q := queue.NewQueue(redisUrl)
-	defer q.Close()
-
-	q.Stream(f.queue)
+	queue.Stream(f.queueName)
 }

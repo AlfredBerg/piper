@@ -15,7 +15,8 @@ var cfgFile string
 
 var rootCmd = &cobra.Command{
 	Use:   "piper",
-	Short: "A queueing tool with std-in/out as a first-class citizen",
+	Short: "A queueing tool with std-in/out as a first-class citizen.",
+	Long:  "Piper is a simple queueing tool that can use either redis as or sqlite. Default is sqlite, to use a redis url must be set e.g. with the env \"PIPER_REDIS_URL\" following the format redis://<user>:<password>@<host>:<port>/<db>",
 }
 
 func Execute() {
@@ -28,7 +29,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.piper.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/piper/config.yaml)")
 
 	rootCmd.AddCommand(insertcmd.NewCmdInsert())
 	rootCmd.AddCommand(streamcmd.NewCmdStream())
@@ -36,21 +37,31 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	// Find home directory.
+	home, err := os.UserHomeDir()
+	cobra.CheckErr(err)
+	confDir := path.Join(home, ".config/piper")
+	if _, err := os.Stat(confDir); os.IsNotExist(err) {
+		err := os.MkdirAll(confDir, 0o755)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	viper.SetEnvPrefix("PIPER") //ENVs start with PIPER_
-	viper.MustBindEnv("REDIS_URL")
+	viper.BindEnv("REDIS_URL")
+	viper.BindEnv("SQLITE_FILE")
+	viper.SetDefault("sqlite_file", confDir+"/piper.sqlite")
 
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
 
 		// Search config in home directory with name ".piper" (without extension).
-		viper.AddConfigPath(path.Join(home, ".config/"))
+		viper.AddConfigPath(confDir)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".piper")
+		viper.SetConfigName("config")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

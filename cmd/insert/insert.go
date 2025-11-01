@@ -7,7 +7,6 @@ import (
 
 	"github.com/AlfredBerg/piper/internal/queue"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 type insertFlags struct {
@@ -28,29 +27,29 @@ func NewCmdInsert() *cobra.Command {
 
 	diffCmd.Flags().StringSliceVarP(&f.queues, "queue", "q", nil, "The queue to insert to, can be specified multiple times to insert to multiple queues")
 	diffCmd.Flags().StringVarP(&f.input, "input", "i", "", "Input file, if empty stdin")
+
 	return diffCmd
 }
-
 func insert(f insertFlags) {
-	redisUrl := viper.GetString("redis_Url")
+	queue := queue.NewQueue()
 
-	q := queue.NewQueue(redisUrl)
-	defer q.Close()
+	defer queue.Close()
 
 	wg := sync.WaitGroup{}
 	insertC := make(chan string)
 	wg.Add(1)
-	go q.Insert(&wg, f.queues, insertC)
+	go queue.Insert(&wg, f.queues, insertC)
 
 	var sc *bufio.Scanner
 	if f.input == "" {
 		sc = bufio.NewScanner(os.Stdin)
 	} else {
-		f, err := os.Open(f.input)
+		fh, err := os.Open(f.input)
 		if err != nil {
 			panic(err)
 		}
-		sc = bufio.NewScanner(f)
+		defer fh.Close()
+		sc = bufio.NewScanner(fh)
 	}
 	for sc.Scan() {
 		insertC <- sc.Text()
