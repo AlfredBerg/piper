@@ -69,7 +69,7 @@ func (s *sQueue) Insert(wg *sync.WaitGroup, queues []string, c <-chan string) {
 			}
 		}
 	}
-
+	wg.Done()
 }
 
 func (s *sQueue) Stream(queue string) {
